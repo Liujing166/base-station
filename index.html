@@ -4,6 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>内江基站故障查询（1-7月累计）</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#1890ff">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="基站故障查询">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    <link rel="icon" type="image/png" href="icon-192.png">
+
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         :root {
@@ -607,6 +615,15 @@
         // Init
         applyFilters();
     })();
+    </script>
+    <script>
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", function(){
+        navigator.serviceWorker.register("sw.js").catch(function(err){
+          console.log("SW register failed:", err);
+        });
+      });
+    }
     </script>
 </body>
 </html>
