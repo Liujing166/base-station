@@ -54,10 +54,11 @@
         .search-box input:focus { box-shadow: 0 0 0 3px rgba(255,255,255,0.3); }
         .search-box input::placeholder { color: #aaa; }
         .search-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); font-size: 16px; opacity: 0.5; }
-        .filter-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 8px; }
+        .filter-row { display: flex; gap: 8px; flex-wrap: nowrap; align-items: center; margin-bottom: 8px; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+        .filter-row::-webkit-scrollbar { display: none; }
         .filter-row:last-child { margin-bottom: 0; }
         .filter-label { font-size: 12px; opacity: 0.8; flex-shrink: 0; min-width: 42px; }
-        .filter-btn {
+        .filter-btn { flex-shrink: 0;
             padding: 5px 12px; border: 1px solid rgba(255,255,255,0.4); border-radius: 16px;
             background: rgba(255,255,255,0.15); color: white; font-size: 12px; cursor: pointer;
             transition: all 0.2s; white-space: nowrap;
@@ -65,7 +66,8 @@
         .filter-btn.active { background: white; color: var(--primary); border-color: white; font-weight: 500; }
         .filter-btn:hover { background: rgba(255,255,255,0.3); }
         .filter-btn.active:hover { background: white; }
-        .date-filter-row { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; margin-bottom: 8px; }
+        .date-filter-row { display: flex; gap: 6px; flex-wrap: nowrap; align-items: center; margin-bottom: 8px; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+        .date-filter-row::-webkit-scrollbar { display: none; }
         .date-filter-row:last-child { margin-bottom: 0; }
         .date-input-wrap { display: flex; align-items: center; gap: 4px; }
         .date-input {
@@ -76,7 +78,7 @@
         .date-input::-webkit-calendar-picker-indicator { filter: invert(1); opacity: 0.8; cursor: pointer; }
         .date-input::placeholder { color: rgba(255,255,255,0.6); }
         .date-sep { font-size: 12px; opacity: 0.8; }
-        .date-quick-btn {
+        .date-quick-btn { flex-shrink: 0;
             padding: 4px 10px; border: 1px solid rgba(255,255,255,0.4); border-radius: 14px;
             background: rgba(255,255,255,0.15); color: white; font-size: 11px; cursor: pointer;
             transition: all 0.2s; white-space: nowrap;
@@ -166,19 +168,14 @@
             <input type="text" id="searchInput" placeholder="搜索基站名称..." autocomplete="off">
         </div>
         <div class="date-filter-row">
-            <span class="filter-label">时间：</span>
-            <div class="date-input-wrap">
-                <input type="date" class="date-input" id="dateStart" placeholder="开始日期">
-                <span class="date-sep">~</span>
-                <input type="date" class="date-input" id="dateEnd" placeholder="结束日期">
-            </div>
-        </div>
-        <div class="date-filter-row">
-            <span class="filter-label"></span>
-            <span class="date-quick-btn" data-quick="month">本月</span>
-            <span class="date-quick-btn" data-quick="3month">近3月</span>
-            <span class="date-quick-btn" data-quick="6month">近6月</span>
-            <span class="date-quick-btn active" data-quick="all">全部</span>
+            <span class="filter-label" style="flex-shrink:0">时间：</span>
+            <input type="date" class="date-input" id="dateStart" placeholder="开始日期" style="flex-shrink:0; width:120px">
+            <span class="date-sep" style="flex-shrink:0">~</span>
+            <input type="date" class="date-input" id="dateEnd" placeholder="结束日期" style="flex-shrink:0; width:120px">
+            <span class="date-quick-btn" data-quick="month" style="flex-shrink:0">本月</span>
+            <span class="date-quick-btn" data-quick="3month" style="flex-shrink:0">近3月</span>
+            <span class="date-quick-btn" data-quick="6month" style="flex-shrink:0">近6月</span>
+            <span class="date-quick-btn active" data-quick="all" style="flex-shrink:0">全部</span>
         </div>
         <div class="filter-row">
             <span class="filter-label">区县：</span>
