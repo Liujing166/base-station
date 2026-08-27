@@ -128,10 +128,19 @@
         .detail-item { padding: 8px 10px; background: var(--bg); border-radius: 8px; font-size: 13px; }
         .detail-item .label { font-size: 11px; color: var(--text-secondary); margin-bottom: 2px; }
         .detail-item .value { font-weight: 600; color: var(--text); }
-        .fault-type-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 10px; background: var(--bg); border-radius: 8px; margin-bottom: 6px; font-size: 13px; }
-        .fault-type-name { font-weight: 500; }
+        .fault-type-item { background: var(--bg); border-radius: 8px; margin-bottom: 6px; font-size: 13px; overflow: hidden; }
+        .fault-type-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 10px; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+        .fault-type-row:active { background: rgba(0,0,0,0.03); }
+        .fault-type-name { font-weight: 500; display: flex; align-items: center; gap: 4px; }
+        .fault-type-arrow { font-size: 10px; opacity: 0.5; transition: transform 0.2s; }
+        .fault-type-item.open .fault-type-arrow { transform: rotate(180deg); }
         .fault-type-stat { text-align: right; font-size: 12px; color: var(--text-secondary); }
         .fault-type-stat strong { color: var(--text); }
+        .fault-type-recent { display: none; padding: 0 10px 8px; }
+        .fault-type-item.open .fault-type-recent { display: block; }
+        .type-recent-item { display: flex; justify-content: space-between; align-items: center; padding: 6px 8px; background: rgba(0,0,0,0.02); border-radius: 6px; margin-top: 4px; font-size: 12px; }
+        .type-recent-time { color: var(--text-secondary); }
+        .type-recent-dur { color: var(--primary); font-weight: 500; }
         .sub-reason-list { margin: 4px 0 6px 12px; padding: 6px 8px; background: #fafafa; border-left: 3px solid #d9d9d9; border-radius: 0 6px 6px 0; }
         .sub-reason-item { display: flex; justify-content: space-between; align-items: center; padding: 3px 0; font-size: 12px; color: var(--text-secondary); }
         .sub-reason-item:not(:last-child) { border-bottom: 1px dashed #eee; }
@@ -325,7 +334,8 @@
             fault_count: fc,
             fault_duration_hours: fdh,
             fault_types: ft,
-            recent_faults: recent
+            recent_faults: recent,
+            af: matched
         };
     }
 
@@ -426,12 +436,38 @@
             {name:'无线主设备故障', cls:'type-wireless', data: ft['无线主设备故障'] || {count:0,duration_hours:0}, sub:null},
             {name:'其他', cls:'type-other', data: ft['其他'] || {count:0,duration_hours:0}, sub: ft['其他'] ? ft['其他'].sub_reasons : null}
         ];
+        var allFaults = s.af || [];
         var faultTypeHTML = '';
         typeEntries.forEach(function(t){
-            faultTypeHTML += '<div class="fault-type-item">' +
-                '<span class="fault-type-name ' + t.cls + '">' + t.name + '</span>' +
+            // Get recent 3 faults of this type
+            var typeFaults = allFaults.filter(function(f){ return f[1] === t.name; });
+            var recentTypeFaults = typeFaults.slice(0, 3);
+            var recentHTML = '';
+            if (recentTypeFaults.length > 0) {
+                recentTypeFaults.forEach(function(f){
+                    var durMin = f[2];
+                    var durStr = durMin >= 60 ? (durMin/60).toFixed(1)+'小时' : durMin.toFixed(0)+'分钟';
+                    recentHTML += '<div class="type-recent-item">' +
+                        '<span class="type-recent-time">' + f[0] + '</span>' +
+                        '<span class="type-recent-dur">' + durStr + '</span>' +
+                        '</div>';
+                });
+            } else {
+                recentHTML = '<div class="type-recent-item"><span class="type-recent-time" style="opacity:0.5">暂无故障记录</span></div>';
+            }
+            var hasFaults = t.data.count > 0;
+            faultTypeHTML += '<div class="fault-type-item' + (hasFaults ? '' : ' no-faults') + '">' +
+                '<div class="fault-type-row" onclick="toggleFaultType(this)">' +
+                '<span class="fault-type-name ' + t.cls + '">' +
+                t.name +
+                (hasFaults ? ' <span class="fault-type-arrow">▼</span>' : '') +
+                '</span>' +
                 '<span class="fault-type-stat"><strong>' + t.data.count + '</strong>次 / ' + formatNum(t.data.duration_hours) + '小时</span>' +
                 '</div>';
+            if (hasFaults) {
+                faultTypeHTML += '<div class="fault-type-recent">' + recentHTML + '</div>';
+            }
+            faultTypeHTML += '</div>';
             if (t.name === '其他' && t.sub) {
                 faultTypeHTML += buildSubReasonsHTML(t.sub);
             }
@@ -496,6 +532,7 @@
     }
 
     window.toggleCard = function(el) { var card = el.closest('.card'); card.classList.toggle('expanded'); };
+    window.toggleFaultType = function(el) { var item = el.closest('.fault-type-item'); if (item.classList.contains('no-faults')) return; item.classList.toggle('open'); };
 
     document.getElementById('searchInput').addEventListener('input', function(e) {
         var val = e.target.value.trim();
@@ -609,7 +646,7 @@
     <script>
     if ("serviceWorker" in navigator) {
       window.addEventListener("load", function(){
-        navigator.serviceWorker.register("sw.js?v=4").catch(function(err){ console.log("SW register failed:", err); });
+        navigator.serviceWorker.register("sw.js?v=5").catch(function(err){ console.log("SW register failed:", err); });
       });
     }
     </script>
