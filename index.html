@@ -144,6 +144,7 @@
         .fault-type-stat strong { color: var(--text); }
         .fault-type-recent { display: none; padding: 0 10px 8px; }
         .fault-type-item.open .fault-type-recent { display: block; }
+        .type-recent-title { font-size: 11px; color: var(--text-secondary); font-weight: 600; padding: 4px 0 4px 2px; letter-spacing: 0.5px; }
         .type-recent-item { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; padding: 6px 8px; background: rgba(0,0,0,0.02); border-radius: 6px; margin-top: 4px; font-size: 12px; }
         .type-recent-info { flex: 1; min-width: 0; }
         .type-recent-time { color: var(--text-secondary); }
@@ -452,10 +453,19 @@
         var allFaults = s.af || [];
         var faultTypeHTML = '';
         typeEntries.forEach(function(t){
-            // Get recent 3 faults of this type
+            // Get recent 3 faults of this type (deduplicated by occurrence time)
             var typeFaults = allFaults.filter(function(f){ return f[1] === t.name; });
-            var recentTypeFaults = typeFaults.slice(0, 3);
-            var recentHTML = '';
+            var seenTimes = {};
+            var dedupedFaults = [];
+            for (var fi = 0; fi < typeFaults.length; fi++) {
+                var ftime = typeFaults[fi][0];
+                if (!seenTimes[ftime]) {
+                    seenTimes[ftime] = true;
+                    dedupedFaults.push(typeFaults[fi]);
+                }
+            }
+            var recentTypeFaults = dedupedFaults.slice(0, 3);
+            var recentHTML = '<div class="type-recent-title">最近三次故障</div>';
             if (recentTypeFaults.length > 0) {
                 recentTypeFaults.forEach(function(f){
                     var durMin = f[2] || 0;
@@ -669,7 +679,7 @@
     <script>
     if ("serviceWorker" in navigator) {
       window.addEventListener("load", function(){
-        navigator.serviceWorker.register("sw.js?v=16").then(function(reg){
+        navigator.serviceWorker.register("sw.js?v=17").then(function(reg){
           reg.addEventListener("updatefound", function(){
             var nw = reg.installing;
             if (nw) nw.addEventListener("statechange", function(){
