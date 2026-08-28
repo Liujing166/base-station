@@ -1,4 +1,4 @@
-const CACHE_NAME = 'base-station-v7';
+const CACHE_NAME = 'base-station-v8';
 const ASSETS = [
   './',
   './index.html',
