@@ -455,7 +455,7 @@
                     var durStr = durH >= 1 ? durH.toFixed(1)+'小时' : durMin.toFixed(0)+'分钟';
                     // Build reason path from L2-L5 non-empty parts
                     var pathParts = [];
-                    for (var pi = 3; pi <= 6; pi++) {
+                    for (var pi = 3; pi <= 3; pi++) {
                         if (f[pi]) pathParts.push(f[pi]);
                     }
                     var pathHTML = '';
@@ -664,7 +664,7 @@
     <script>
     if ("serviceWorker" in navigator) {
       window.addEventListener("load", function(){
-        navigator.serviceWorker.register("sw.js?v=8").catch(function(err){ console.log("SW register failed:", err); });
+        navigator.serviceWorker.register("sw.js?v=9").catch(function(err){ console.log("SW register failed:", err); });
       });
     }
     </script>
