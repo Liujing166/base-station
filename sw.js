@@ -1,4 +1,4 @@
-const CACHE_NAME = 'base-station-v14';
+const CACHE_NAME = 'base-station-v15';
 const ASSETS = [
   './',
   './index.html',
@@ -25,6 +25,18 @@ self.addEventListener('activate', event => {
 
 self.addEventListener('fetch', event => {
   if (event.request.method !== 'GET') return;
+  // HTML navigation: network-first to always get latest page
+  if (event.request.mode === 'navigate' || event.request.destination === 'document') {
+    event.respondWith(
+      fetch(event.request).then(response => {
+        const copy = response.clone();
+        caches.open(CACHE_NAME).then(cache => cache.put(event.request, copy)).catch(()=>{});
+        return response;
+      }).catch(() => caches.match(event.request).then(r => r || caches.match('./index.html')))
+    );
+    return;
+  }
+  // Other assets: cache-first
   event.respondWith(
     caches.match(event.request).then(cached => {
       if (cached) return cached;
