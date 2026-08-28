@@ -460,7 +460,7 @@
                 recentTypeFaults.forEach(function(f){
                     var durMin = f[2] || 0;
                     var durH = durMin / 60;
-                    var durStr = durH >= 1 ? durH.toFixed(1)+'小时' : durMin.toFixed(0)+'分钟';
+                    var durStr = durH.toFixed(1)+'小时';
                     // Build reason path from L2-L5 non-empty parts
                     var pathParts = [];
                     for (var pi = 3; pi <= 3; pi++) {
@@ -491,8 +491,7 @@
                 '<span class="fault-type-stat"><strong>' + t.data.count + '</strong>次 / ' + formatNum(t.data.duration_hours) + '小时</span>' +
                 '</div>';
             if (hasFaults) {
-                var subReasonsHTML = (t.name === '其他' && t.sub) ? buildSubReasonsHTML(t.sub) : '';
-                faultTypeHTML += '<div class="fault-type-recent">' + subReasonsHTML + recentHTML + '</div>';
+                faultTypeHTML += '<div class="fault-type-recent">' + recentHTML + '</div>';
             }
             faultTypeHTML += '</div>';
         });
@@ -501,7 +500,7 @@
         if (rf.length > 0) {
             rf.slice(0, 3).forEach(function(r){
                 var durMin = r.duration_minutes;
-                var durStr = durMin >= 60 ? (durMin/60).toFixed(1)+'小时' : durMin.toFixed(0)+'分钟';
+                var durStr = (durMin/60).toFixed(1)+'小时';
                 recentHTML += '<li class="recent-item">' +
                     '<span class="recent-time">' + r.time + '</span>' +
                     '<span class="recent-reason">' + r.reason + '</span>' +
@@ -670,7 +669,7 @@
     <script>
     if ("serviceWorker" in navigator) {
       window.addEventListener("load", function(){
-        navigator.serviceWorker.register("sw.js?v=15").then(function(reg){
+        navigator.serviceWorker.register("sw.js?v=16").then(function(reg){
           reg.addEventListener("updatefound", function(){
             var nw = reg.installing;
             if (nw) nw.addEventListener("statechange", function(){
