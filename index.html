@@ -491,12 +491,10 @@
                 '<span class="fault-type-stat"><strong>' + t.data.count + '</strong>次 / ' + formatNum(t.data.duration_hours) + '小时</span>' +
                 '</div>';
             if (hasFaults) {
-                faultTypeHTML += '<div class="fault-type-recent">' + recentHTML + '</div>';
+                var subReasonsHTML = (t.name === '其他' && t.sub) ? buildSubReasonsHTML(t.sub) : '';
+                faultTypeHTML += '<div class="fault-type-recent">' + subReasonsHTML + recentHTML + '</div>';
             }
             faultTypeHTML += '</div>';
-            if (t.name === '其他' && t.sub) {
-                faultTypeHTML += buildSubReasonsHTML(t.sub);
-            }
         });
 
         var recentHTML = '';
@@ -672,7 +670,7 @@
     <script>
     if ("serviceWorker" in navigator) {
       window.addEventListener("load", function(){
-        navigator.serviceWorker.register("sw.js?v=13").catch(function(err){ console.log("SW register failed:", err); });
+        navigator.serviceWorker.register("sw.js?v=14").catch(function(err){ console.log("SW register failed:", err); });
       });
     }
     </script>
